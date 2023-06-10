@@ -33,11 +33,11 @@ class Global {
     _prefs = await SharedPreferences.getInstance();
     var _profile = _prefs.getString("profile");
     if (_profile != null && jsonDecode(_profile)['user'] != null) {
-     // try {
+     try {
         profile = Profile.fromJson(jsonDecode(_profile!));
-     // } catch (e) {
-        //print("init error: $e");
-      //}
+     } catch (e) {
+        print("init error: $e");
+      }
     } else {
       // 默认主题索引为0， 代表蓝色
       profile = Profile()..theme=0;
