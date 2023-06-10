@@ -20,19 +20,28 @@ class LoginRoute extends StatefulWidget {
 }
 
 class _LoginRouteState extends State<LoginRoute> {
-  TextEditingController _unameController = TextEditingController(text: "tangbing");
-  TextEditingController _pwdController = TextEditingController(text: "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");
+  TextEditingController _unameController = TextEditingController();
+  TextEditingController _pwdController = TextEditingController();
   bool pwdShow = false;
   GlobalKey _formKey = GlobalKey<FormState>();
   bool _nameAutoFocus = false;
 
   @override
   void initState() {
-    _unameController.text = Global.profile.lastLogin;
-    if (_unameController.text.isNotEmpty) {
-      _nameAutoFocus = false;
+    if (Global.profile.lastLogin != null) {
+      _unameController.text = Global.profile.lastLogin!;
+      if (_unameController.text.isNotEmpty) {
+        _nameAutoFocus = false;
+      }
     }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _unameController.dispose();
+    _pwdController.dispose();
+    super.dispose();
   }
 
   @override

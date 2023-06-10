@@ -17,18 +17,21 @@ class ProfileChangeNotifier extends ChangeNotifier {
 
 
 class UserModel extends ProfileChangeNotifier {
-  User get user => _profile.user ?? User();
+  User? get user => _profile.user;
 
   // App是否登录(如果有用户信息，则证明登录过)
   bool get isLogin => user != null;
 
   // 用户信息发生变化, 更新用户信息并通知依赖它的子孙widgets更新
-  set user(User user) {
-    if (user.login != (_profile.user?.login ?? "")) {
-      _profile.lastLogin = _profile.user?.login ?? "";
-      _profile.user = user;
-      notifyListeners();
-    }
+  set user(User? user) {
+    _profile.lastLogin = _profile.user?.login;
+    _profile.user = user;
+    notifyListeners();
+    // if (user?.login != (_profile.user?.login ?? "")) {
+    //   _profile.lastLogin = _profile.user?.login;
+    //   _profile.user = user;
+    //   notifyListeners();
+    // }
   }
 }
 
@@ -52,16 +55,17 @@ class LocaleModel extends ProfileChangeNotifier {
     if (_profile.locale == null) {
       return null;
     } else {
-      var t = _profile.locale!.split("-");
-      return Locale(t[0], t[1]);
+      var t = _profile.locale!.split("_");
+      if (t.length >= 2) return Locale(t[0], t[1]);
+      return null;
     }
   }
 
   // 获取当前Locale的字符串表示
-  String? get localeaa => _profile.locale;
+  String? get locale => _profile.locale;
 
   // 用户改变App语言后，通知依赖项更新，语言会立刻更新
-  set locale(String locale) {
+  set locale(String? locale) {
     if (locale != _profile.locale) {
       _profile.locale = locale;
       notifyListeners();

@@ -33,13 +33,13 @@ class _HomeRouteState extends State<HomeRoute> {
       appBar: AppBar(title: Text(GmLocalizations.of(context)?.home ?? "")
       ),
       body: _buildBody(), // 构建主页面
-      drawer: MyDrawer(),
+      drawer: const MyDrawer(),
     );
   }
 
   Widget _buildBody() {
-    print("_buildBody-------");
     UserModel userModel = Provider.of<UserModel>(context);
+    print("_buildBody-------：${userModel.isLogin}");
     if (!userModel.isLogin) {
       return Center(
         child: ElevatedButton(
@@ -54,7 +54,7 @@ class _HomeRouteState extends State<HomeRoute> {
           if (_items[index].name == loadingTag) {
             if (hasMore) {
               // 获取数据
-              _retriieveDate(Global.profile.user?.login ?? "login");
+              _retriieveDate(userModel.user?.login ?? "_retriieveDate login");
               // 加载时显示loading
               return Container(
                 padding: EdgeInsets.all(16.0),
@@ -112,6 +112,99 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Drawer(
+      child: MediaQuery.removePadding(context: context,
+          removeBottom: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(), // 构建抽屉菜单头部
+              Expanded(child: _buildMenus()), //构建功能菜单
+            ],
+          )),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Consumer<UserModel>(builder: (BuildContext context, UserModel value, Widget? child) {
+        return GestureDetector(
+          child: Container(
+            color: Theme.of(context).primaryColor,
+            padding: EdgeInsets.only(top: 40, bottom: 20),
+            child: Row(
+              children: [
+                Padding(padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: ClipOval(
+                    // 如果已登录，则显示用户头像；若未登录，则显示默认头像
+                  child: value.isLogin ? gmAvatar(value.user?.avatar_url ?? "",
+                      width: 80
+                    ) : Image.asset("imgs/avatar-default.png", width: 80,),
+                  ),
+                ),
+                Text(
+                  value.isLogin ? value.user?.login ?? "isLogined"  : GmLocalizations.of(context)?.login ?? "--",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          onTap: () {
+            if (!value.isLogin) {
+              Navigator.of(context).pushNamed("login");
+            }
+          },
+        );
+    },
+
+    );
+  }
+
+  Widget _buildMenus() {
+    return Consumer<UserModel>(builder: (BuildContext context, UserModel value, Widget? child) {
+        var gm = GmLocalizations.of(context);
+        return ListView(
+          children: [
+            ListTile(
+              leading: Icon(Icons.color_lens),
+              title: Text(gm?.theme ?? "theme"),
+              onTap: () => Navigator.pushNamed(context, "themes"),
+            ),
+            ListTile(
+              leading: Icon(Icons.language),
+              title: Text(gm?.language ?? "language"),
+              onTap: () => Navigator.pushNamed(context, "language"),
+            ),
+            if (value.isLogin)
+              ListTile(
+                leading: Icon(Icons.power_settings_new),
+                title: Text(gm?.logout ?? "logout"),
+                onTap: () {
+                    showDialog(context: context,
+                      builder: (ctx) {
+                         return AlertDialog(
+                           content: Text(gm?.logoutTip ?? "logoutTip"),
+                           actions: [
+                             TextButton(onPressed: () => Navigator.pop(context),
+                                 child: Text(gm?.cancel ?? "cancel")),
+
+                             TextButton(onPressed: () {
+                               // 该赋值语法会重新触发MaterialApp rebuild
+                               value.user = null;
+                               Navigator.pop(context);
+                             },
+                                 child: Text(gm?.yes ?? "yes"))
+                           ],
+                         );
+                      }
+                    );
+                }
+              ),
+          ],
+        );
+    }
+    );
   }
 }

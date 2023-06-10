@@ -42,6 +42,8 @@ dependencies:
   flutter_localization: ^0.1.11
   fluttertoast: ^8.2.2
 
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

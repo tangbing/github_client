@@ -24,7 +24,7 @@ class Global {
 
   // 可选的主题列表
   static List<MaterialColor> get themes => _themes;
-
+  // 是否为release版
   static bool get isRelease => const bool.fromEnvironment("dart.vm.product");
 
   // 初始化全局变量，会在App启动时执行
@@ -32,12 +32,12 @@ class Global {
     WidgetsFlutterBinding.ensureInitialized();
     _prefs = await SharedPreferences.getInstance();
     var _profile = _prefs.getString("profile");
-    if (_profile != null) {
-      try {
-        profile = Profile.fromJson(jsonDecode(_profile));
-      } catch (e) {
-        print(e);
-      }
+    if (_profile != null && jsonDecode(_profile)['user'] != null) {
+     // try {
+        profile = Profile.fromJson(jsonDecode(_profile!));
+     // } catch (e) {
+        //print("init error: $e");
+      //}
     } else {
       // 默认主题索引为0， 代表蓝色
       profile = Profile()..theme=0;
