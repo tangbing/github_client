@@ -4,6 +4,7 @@ import 'package:github_client_app/routes/home_page.dart';
 import 'package:github_client_app/routes/language.dart';
 import 'package:github_client_app/routes/login.dart';
 import 'package:github_client_app/routes/theme_change.dart';
+import 'package:github_client_app/states/counter_provider.dart';
 import 'package:github_client_app/states/profile_change_notifier.dart';
 import 'common/global.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeModel()),
         ChangeNotifierProvider(create: (_) => UserModel()),
         ChangeNotifierProvider(create: (_) => LocaleModel()),
+        ChangeNotifierProvider(create: (_) => CounterProvider()),
+
       ],
        child: Consumer2<ThemeModel, LocaleModel>(
          builder: (BuildContext context, themeModel, localeModel, child) {

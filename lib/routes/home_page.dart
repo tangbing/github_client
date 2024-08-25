@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:github_client_app/common/funs.dart';
 import 'package:github_client_app/common/git_api.dart';
 import 'package:github_client_app/models/index.dart';
+import 'package:github_client_app/routes/detail_page.dart';
+import 'package:github_client_app/routes/selector_page.dart';
+import 'package:github_client_app/states/counter_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../common/global.dart';
@@ -30,10 +33,26 @@ class _HomeRouteState extends State<HomeRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(GmLocalizations.of(context)?.home ?? "")
+      appBar: AppBar(title: Text(GmLocalizations.of(context)?.home ?? ""),
+        actions: [
+          Consumer<CounterProvider>(
+            builder: (context, value, child) {
+              return Text('click  ${value.counter}',
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 18,
+                    fontWeight: FontWeight.normal,
+                  ));
+            },
+          )
+        ],
       ),
       body: _buildBody(), // 构建主页面
       drawer: const MyDrawer(),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SelectorPage())),
+      ),
     );
   }
 
@@ -75,7 +94,11 @@ class _HomeRouteState extends State<HomeRoute> {
             }
           }
           //显示单词列表项
-          return RepoItem(_items[index]);
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => DetailPage()));
+            },
+              child: RepoItem(_items[index]));
         },
       );
     }
